@@ -1,0 +1,31 @@
+body {
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+#game-container {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 3fr 1fr;
+  background-color: darkgrey;
+}
+
+#main-stage {
+  background-color: blanchedalmond;
+}
+
+.stack {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: 100px;
+  height: 200px;
+  display: inline-block;
+  background-color: black;
+  color: white;
+}
