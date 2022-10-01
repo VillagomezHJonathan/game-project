@@ -1,58 +1,63 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
+  width: 100%;
   height: 100vh;
-  padding: 0;
-  margin: 0;
   overflow: hidden;
 }
 
 #game-container {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 5fr 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: darkgrey;
 }
 
 #main-stage {
+  height: 300px;
   background-color: blanchedalmond;
 }
 
 #top {
   transform: rotate(180deg);
-  align-items: flex-start;
-}
-
-#bottom {
-  align-items: flex-start;
 }
 
 .stack {
+  padding-left: 4rem;
   display: flex;
   justify-content: center;
+  align-items: flex-end;
 }
 
 .card {
-  width: 150px;
-  height: 100%;
+  width: 175px;
+  height: 200px;
   margin-left: -4rem;
-  display: inline-block;
+  padding: 1.25rem 0.75rem;
+  display: inline;
   background-color: black;
   color: white;
   border: 1px solid white;
+  border-radius: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.card.hover {
-  background-color: tomato;
+  transform: translateY(120px);
+  transition: all 0.2s ease;
 }
 
 .card:hover {
   z-index: 2;
-  transform: translateY(-50px);
+  background-color: tomato;
+  transform: translateY(0);
+}
+
+#test-btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
 }
