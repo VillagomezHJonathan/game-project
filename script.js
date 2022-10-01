@@ -1,3 +1,6 @@
+////////////////////////////
+// Classes
+////////////////////////////
 class Card {
   constructor() {
     const troopOptions = ['Spearmen', 'Cavalry', 'Archers']
@@ -27,7 +30,7 @@ class Card {
     parentElem.append(this.card)
   }
 
-  returnCard() {
+  getCard() {
     return this.card
   }
 
@@ -36,20 +39,48 @@ class Card {
   }
 }
 
+////////////////////////////
+// Global variables
+////////////////////////////
 const gameContainer = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
 const topStack = document.getElementById('top')
 const bottomStack = document.getElementById('bottom')
 
-const cardHover = (evt) => {
-  console.log(evt.target)
+////////////////////////////
+// Event listeners
+////////////////////////////
+const cardMouseOver = (evt, card) => {
+  card.classList.add('hover')
 }
 
+const cardMouseLeave = (evt, card) => {
+  card.classList.remove('hover')
+}
+
+const cardClick = (evt, card) => {
+  console.log('click')
+}
+
+////////////////////////////
+// Helper functions
+////////////////////////////
 const createMultCards = (parentElem, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card()
     card.createCard(parentElem)
-    card.returnCard().addEventListener('click', cardHover)
+
+    card.getCard().addEventListener('mouseover', (evt) => {
+      cardMouseOver(evt, card.getCard())
+    })
+
+    card.getCard().addEventListener('mouseleave', (evt) => {
+      cardMouseLeave(evt, card.getCard())
+    })
+
+    card.getCard().addEventListener('click', (evt) => {
+      cardClick(evt, card.getCard())
+    })
   }
 }
 
