@@ -27,6 +27,10 @@ class Card {
     parentElem.append(this.card)
   }
 
+  returnCard() {
+    return this.card
+  }
+
   deleteCard() {
     this.card.remove()
   }
@@ -37,10 +41,15 @@ const mainStage = document.getElementById('main-stage')
 const topStack = document.getElementById('top')
 const bottomStack = document.getElementById('bottom')
 
+const cardHover = (evt) => {
+  console.log(evt.target)
+}
+
 const createMultCards = (parentElem, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card()
     card.createCard(parentElem)
+    card.returnCard().addEventListener('click', cardHover)
   }
 }
 

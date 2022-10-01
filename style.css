@@ -1,20 +1,34 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   height: 100vh;
+  padding: 0;
   margin: 0;
   overflow: hidden;
 }
 
 #game-container {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 3fr 1fr;
+  grid-template-rows: 1fr 5fr 1fr;
   background-color: darkgrey;
 }
 
 #main-stage {
   background-color: blanchedalmond;
+}
+
+#top {
+  transform: rotate(180deg);
+  align-items: flex-start;
+}
+
+#bottom {
+  align-items: flex-start;
 }
 
 .stack {
@@ -23,9 +37,18 @@ body {
 }
 
 .card {
-  width: 100px;
-  height: 200px;
+  width: 150px;
+  height: 100%;
+  margin-left: -4rem;
   display: inline-block;
   background-color: black;
   color: white;
+  border: 1px solid white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  z-index: 2;
+  transform: translateY(-50px);
 }
