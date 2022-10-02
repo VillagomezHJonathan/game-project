@@ -35,6 +35,10 @@ class Card {
     return this.card
   }
 
+  getOwner() {
+    return this.owner
+  }
+
   deleteCard() {
     this.card.remove()
   }
@@ -76,14 +80,14 @@ const cardMouseLeave = (evt) => {
 const cardClick = (evt, card) => {
   const target = evt.target
   target.classList.add('selected')
-  if (card.owner === 'p1') {
+  if (card.getOwner() === 'p1') {
     p1ChoiceCont.append(target)
     cardChoices.p1 = card
-    battleRound()
+    checkWinner()
   } else {
     p2ChoiceCont.append(target)
     cardChoices.p2 = card
-    battleRound()
+    checkWinner()
   }
 }
 
@@ -109,9 +113,7 @@ const createMultCards = (owner, parentElem, amount) => {
   }
 }
 
-const battleRound = () => {
-  let winner = null
-
+const checkWinner = () => {
   if (cardChoices.p1 !== null && cardChoices.p2 !== null) {
     const p1Troop = cardChoices.p1.troop
     const p1Power = cardChoices.p1.power
@@ -122,9 +124,11 @@ const battleRound = () => {
     const p1 = Object.keys(cardChoices)[0]
     const p2 = Object.keys(cardChoices)[1]
 
+    let winner = null
+
     if (p1Troop === p2Troop) {
       if (p1Power === p2Power) {
-        winner = 'draw'
+        winner = 'none'
       } else if (p1Power > p2Power) {
         winner = p1
       } else {
@@ -149,10 +153,10 @@ const battleRound = () => {
         winner = p2
       }
     }
-  }
 
-  console.log(winner)
-  return winner
+    console.log(winner)
+    return winner
+  }
 }
 
 createMultCards('p2', topStack, 5)
@@ -167,5 +171,5 @@ createMultCards('p1', bottomStack, 5)
 
 //   console.clear()
 //   console.log('Choices', cardChoices)
-//   battleRound()
+//   checkWinner()
 // })
