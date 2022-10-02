@@ -10,7 +10,7 @@ body {
   overflow: hidden;
 }
 
-#game-container {
+.container {
   width: 100%;
   height: 100%;
   display: flex;
@@ -19,9 +19,16 @@ body {
   background-color: darkgrey;
 }
 
-#main-stage {
+.stage {
   height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: blanchedalmond;
+}
+
+.choices {
+  margin: 0 5rem;
 }
 
 #top {
@@ -50,7 +57,16 @@ body {
   transition: all 0.2s ease;
 }
 
-.card:hover {
+.card.selected {
+  width: 100px;
+  height: 125px;
+  margin-left: 0;
+  display: inline-block;
+  cursor: default;
+  transform: translateY(0);
+}
+
+.card.hover {
   z-index: 2;
   background-color: tomato;
   transform: translateY(0);

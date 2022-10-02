@@ -2,11 +2,12 @@
 // Classes
 ////////////////////////////
 class Card {
-  constructor() {
+  constructor(owner) {
     const troopOptions = ['Spearmen', 'Cavalry', 'Archers']
     const randTroop = Math.floor(Math.random() * troopOptions.length)
     const randPower = Math.floor(Math.random() * 10 + 1)
 
+    this.owner = owner
     this.card = null
     this.troop = troopOptions[randTroop]
     this.power = randPower
@@ -42,8 +43,10 @@ class Card {
 ////////////////////////////
 // Global variables
 ////////////////////////////
-const gameContainer = document.getElementById('game-container')
+const gameCont = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
+const p1ChoiceCont = document.getElementById('p1-choice')
+const p2ChoiceCont = document.getElementById('p2-choice')
 const topStack = document.getElementById('top')
 const bottomStack = document.getElementById('bottom')
 
@@ -51,40 +54,55 @@ const cardChoices = {
   p1: null,
   p2: null
 }
+////////////////////////////
+// Helper functions
+////////////////////////////
 
 ////////////////////////////
 // Event listeners
 ////////////////////////////
-const cardMouseOver = (evt, card) => {
-  card.classList.add('hover')
+const cardMouseOver = (evt) => {
+  const target = evt.target
+  if (!target.classList.contains('selected')) {
+    target.classList.add('hover')
+  }
 }
 
-const cardMouseLeave = (evt, card) => {
-  card.classList.remove('hover')
+const cardMouseLeave = (evt) => {
+  const target = evt.target
+  target.classList.remove('hover')
 }
 
 const cardClick = (evt, card) => {
-  console.log('click')
+  const target = evt.target
+  target.classList.add('selected')
+  if (card.owner === 'p1') {
+    p1ChoiceCont.append(target)
+    cardChoices.p1 = card
+  } else {
+    p2ChoiceCont.append(target)
+    cardChoices.p2 = card
+  }
 }
 
 ////////////////////////////
-// Helper functions
+// Game functions
 ////////////////////////////
-const createMultCards = (parentElem, amount) => {
+const createMultCards = (owner, parentElem, amount) => {
   for (let i = 0; i < amount; i++) {
-    const card = new Card()
+    const card = new Card(owner)
     card.createCard(parentElem)
 
     card.getCard().addEventListener('mouseover', (evt) => {
-      cardMouseOver(evt, card.getCard())
+      cardMouseOver(evt)
     })
 
     card.getCard().addEventListener('mouseleave', (evt) => {
-      cardMouseLeave(evt, card.getCard())
+      cardMouseLeave(evt)
     })
 
     card.getCard().addEventListener('click', (evt) => {
-      cardClick(evt, card.getCard())
+      cardClick(evt, card)
     })
   }
 }
@@ -101,31 +119,33 @@ const checkRoundWinner = () => {
 
   let winner = null
 
-  if (p1Troop === p2Troop) {
-    if (p1Power === p2Power) {
-      winner = 'draw'
-    } else if (p1Power > p2Power) {
-      winner = p1
-    } else {
-      winner = p2
-    }
-  } else if (p1Troop === 'Spearmen') {
-    if (p2Troop === 'Cavalry') {
-      winner = p1
-    } else {
-      winner = p2
-    }
-  } else if (p1Troop === 'Cavalry') {
-    if (p2Troop === 'Archer') {
-      winner = p1
-    } else {
-      winner = p2
-    }
-  } else if (p1Troop === 'Archers') {
-    if (p2Troop === 'Spearmen') {
-      winner = p1
-    } else {
-      winner = p2
+  if (cardChoices.p1 !== null && cardChoices.p2 !== null) {
+    if (p1Troop === p2Troop) {
+      if (p1Power === p2Power) {
+        winner = 'draw'
+      } else if (p1Power > p2Power) {
+        winner = p1
+      } else {
+        winner = p2
+      }
+    } else if (p1Troop === 'Spearmen') {
+      if (p2Troop === 'Cavalry') {
+        winner = p1
+      } else {
+        winner = p2
+      }
+    } else if (p1Troop === 'Cavalry') {
+      if (p2Troop === 'Archer') {
+        winner = p1
+      } else {
+        winner = p2
+      }
+    } else if (p1Troop === 'Archers') {
+      if (p2Troop === 'Spearmen') {
+        winner = p1
+      } else {
+        winner = p2
+      }
     }
   }
 
@@ -133,12 +153,12 @@ const checkRoundWinner = () => {
   return winner
 }
 
-createMultCards(topStack, 5)
-createMultCards(bottomStack, 5)
+createMultCards('p2', topStack, 5)
+createMultCards('p1', bottomStack, 5)
 // const button = document.createElement('button')
 // button.innerText = 'test'
 // button.setAttribute('id', 'test-btn')
-// gameContainer.append(button)
+// gameCont.append(button)
 // button.addEventListener('click', () => {
 //   cardChoices.p1 = new Card()
 //   cardChoices.p2 = new Card()
