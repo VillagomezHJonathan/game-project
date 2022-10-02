@@ -79,9 +79,11 @@ const cardClick = (evt, card) => {
   if (card.owner === 'p1') {
     p1ChoiceCont.append(target)
     cardChoices.p1 = card
+    battleRound()
   } else {
     p2ChoiceCont.append(target)
     cardChoices.p2 = card
+    battleRound()
   }
 }
 
@@ -107,19 +109,19 @@ const createMultCards = (owner, parentElem, amount) => {
   }
 }
 
-const checkRoundWinner = () => {
-  const p1Troop = cardChoices.p1.troop
-  const p1Power = cardChoices.p1.power
-
-  const p2Troop = cardChoices.p2.troop
-  const p2Power = cardChoices.p2.power
-
-  const p1 = Object.keys(cardChoices)[0]
-  const p2 = Object.keys(cardChoices)[1]
-
+const battleRound = () => {
   let winner = null
 
   if (cardChoices.p1 !== null && cardChoices.p2 !== null) {
+    const p1Troop = cardChoices.p1.troop
+    const p1Power = cardChoices.p1.power
+
+    const p2Troop = cardChoices.p2.troop
+    const p2Power = cardChoices.p2.power
+
+    const p1 = Object.keys(cardChoices)[0]
+    const p2 = Object.keys(cardChoices)[1]
+
     if (p1Troop === p2Troop) {
       if (p1Power === p2Power) {
         winner = 'draw'
@@ -165,5 +167,5 @@ createMultCards('p1', bottomStack, 5)
 
 //   console.clear()
 //   console.log('Choices', cardChoices)
-//   checkRoundWinner()
+//   battleRound()
 // })
