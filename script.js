@@ -13,7 +13,7 @@ class Card {
     this.power = randPower
   }
 
-  aignCard(player) {
+  makeCard() {
     this.cardElem = document.createElement('div')
     this.cardElem.classList.add('card')
 
@@ -28,7 +28,7 @@ class Card {
     this.cardElem.append(name)
     this.cardElem.append(power)
 
-    player.append(this.cardElem)
+    return this.cardElem
   }
 
   getCardElem() {
@@ -45,11 +45,12 @@ class Card {
 }
 
 class Player {
-  constructor(name) {
+  constructor(name, homeBase) {
     this.name = name
     this.choice = null
     this.health = 100
-    this.winStack = []
+    this.winsArr = []
+    this.homeBase = homeBase
   }
 
   getName() {
@@ -60,20 +61,45 @@ class Player {
     this.choice = choice
   }
 
+  resetChoice() {
+    this.choice = null
+  }
+
+  removeChoiceElem() {
+    this.choice.getCardElem().remove()
+  }
+
+  appendChoiceElem(destination) {
+    destination.append(this.choice.getCardElem())
+  }
+
   getChoice() {
     return this.choice
   }
 
-  pushToWinStack(card) {
-    this.winStack.push(card)
+  appendToStack(cardElem) {
+    const stack = this.homeBase.querySelector('.stack')
+    stack.append(cardElem)
   }
 
-  getWinStack() {
-    return this.winStack
+  getHomeBase() {
+    return this.homeBase
   }
 
-  resetWinStack() {
-    this.winStack = []
+  getStack() {
+    return this.homeBase.querySelector('.stack')
+  }
+
+  pushToWinsArr(card) {
+    this.winsArr.push(card)
+  }
+
+  getWinsArr() {
+    return this.winsArr
+  }
+
+  resetWinsArr() {
+    this.winsArr = []
   }
 }
 
@@ -83,33 +109,36 @@ class Player {
 const gameCont = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
 
-const p1ChoiceCont = document.getElementById('p1-choice')
-const p2ChoiceCont = document.getElementById('p2-choice')
-
 const p1Health = document
   .getElementById('bottom')
   .querySelector('.health::before')
 const p2Health = document.getElementById('top').querySelector('.health::before')
 
-const topStack = document.getElementById('top').querySelector('.stack')
 const topWinStack = document
   .getElementById('top')
   .querySelectorAll('.win-stack div')
 
-const bottomStack = document.getElementById('bottom').querySelector('.stack')
 const bottomWinStack = document
   .getElementById('bottom')
   .querySelectorAll('.win-stack div')
 
-const p1 = new Player('p1')
-const p2 = new Player('p2')
+const p1 = new Player('p1', document.getElementById('bottom'))
+const p1ChoiceCont = document.getElementById('p1-choice')
+
+const p2 = new Player('p2', document.getElementById('top'))
+const p2ChoiceCont = document.getElementById('p2-choice')
 
 ////////////////////////////
 // Helper functions
 ////////////////////////////
 const resetCardChoices = () => {
-  p1.setChoice(null)
-  p2.setChoice(null)
+  p1.resetChoice()
+  p2.resetChoice()
+}
+
+const removeCardChoicesElems = () => {
+  p1.removeChoiceElem()
+  p2.removeChoiceElem()
 }
 
 const choicesFilled = () => {
@@ -121,6 +150,23 @@ const clearWinStackElem = (stack) => {
     div.innerHTML = ''
   })
 }
+
+const updateWinStack = (player) => {
+  const stackDiv = player.getHomeBase().querySelectorAll('.win-stack .winner')
+  const currentWinPos = player.getWinsArr().length - 1
+
+  stackDiv[currentWinPos].append(player.getChoice().getCardElem())
+}
+
+const getTotalDamage = (player) => {
+  const winArr = player.getWinsArr()
+
+  const total = winArr.reduce((prev, cur) => prev.power + cur.power, 0)
+
+  return total
+}
+
+getTotalDamage(p1)
 
 ////////////////////////////
 // Event listeners
@@ -141,18 +187,21 @@ const cardClick = (evt, card) => {
   const cardElem = card.getCardElem()
 
   if (
-    cardElem.parentElement === bottomStack ||
-    cardElem.parentElement === topStack
+    cardElem.parentElement === p1.getStack() ||
+    cardElem.parentElement === p2.getStack()
   ) {
-    if (card.getOwner() === p1.getName() && p1.getChoice() === null) {
+    if (card.getOwner().getName() === p1.getName() && p1.getChoice() === null) {
       cardElem.classList.add('selected')
-      p1ChoiceCont.append(cardElem)
       p1.setChoice(card)
+      p1.appendChoiceElem(p1ChoiceCont)
       playRound()
-    } else if (card.getOwner() === p2.getName() && p2.getChoice() === null) {
+    } else if (
+      card.getOwner().getName() === p2.getName() &&
+      p2.getChoice() === null
+    ) {
       cardElem.classList.add('selected')
-      p2ChoiceCont.append(cardElem)
       p2.setChoice(card)
+      p2.appendChoiceElem(p2ChoiceCont)
       playRound()
     }
   }
@@ -161,10 +210,10 @@ const cardClick = (evt, card) => {
 ////////////////////////////
 // Game functions
 ////////////////////////////
-const generateCards = (owner, player, amount) => {
+const generateCards = (owner, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card(owner)
-    card.aignCard(player)
+    owner.appendToStack(card.makeCard())
 
     card.getCardElem().addEventListener('mouseover', (evt) => {
       cardMouseOver(evt, card)
@@ -218,14 +267,12 @@ const checkRoundWinner = () => {
 }
 
 const attack = () => {
-  if (p1.getWinStack().length === bottomWinStack.length) {
+  if (p1.getWinsArr().length === bottomWinStack.length) {
     clearWinStackElem(bottomWinStack)
-    p1.resetWinStack()
-    console.log('p1 attacks')
-  } else if (p2.getWinStack().length === topWinStack.length) {
+    p1.resetWinsArr()
+  } else if (p2.getWinsArr().length === topWinStack.length) {
     clearWinStackElem(topWinStack)
-    p2.resetWinStack()
-    console.log('p2 attacks')
+    p2.resetWinsArr()
   }
 }
 
@@ -235,33 +282,30 @@ const playRound = () => {
 
     setTimeout(() => {
       if (winner !== 'none') {
-        winner.pushToWinStack(winner.choice)
+        winner.pushToWinsArr(winner.choice)
 
-        const cardElem = winner.getChoice().getCardElem()
-        const currentWins = winner.getWinStack().length
-
-        if (winner.choice.owner === 'p1') {
-          bottomWinStack[currentWins - 1].append(cardElem)
-          p2.choice.removeCardElem()
-        } else if (winner.choice.owner === 'p2') {
-          topWinStack[currentWins - 1].append(cardElem)
-          p1.choice.removeCardElem()
+        if (winner.getName() === p1.getName()) {
+          updateWinStack(p1)
+          p2.removeChoiceElem()
+        } else if (winner.getName() === p2.getName()) {
+          updateWinStack(p2)
+          p1.removeChoiceElem()
         }
       } else {
-        p1.choice.removeCardElem()
-        p2.choice.removeCardElem()
+        removeCardChoicesElems()
       }
 
-      generateCards('p1', bottomStack, 1)
-      generateCards('p2', topStack, 1)
-      resetCardChoices()
+      p1.resetChoice()
+      p2.resetChoice()
+      generateCards(p1, 1)
+      generateCards(p2, 1)
       attack()
     }, 1000)
   }
 }
 
-generateCards('p1', bottomStack, 5)
-generateCards('p2', topStack, 5)
+generateCards(p1, 5)
+generateCards(p2, 5)
 // const button = document.createElement('button')
 // button.innerText = 'test'
 // button.setAttribute('id', 'test-btn')
