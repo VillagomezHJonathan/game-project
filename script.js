@@ -8,14 +8,14 @@ class Card {
     const randPower = Math.floor(Math.random() * 10 + 1)
 
     this.owner = owner
-    this.card = null
+    this.cardElem = null
     this.troop = troopOptions[randTroop]
     this.power = randPower
   }
 
   createCard(parentElem) {
-    this.card = document.createElement('div')
-    this.card.classList.add('card')
+    this.cardElem = document.createElement('div')
+    this.cardElem.classList.add('card')
 
     const name = document.createElement('p')
     name.classList.add('troop')
@@ -25,14 +25,14 @@ class Card {
     power.classList.add('power')
     power.innerText = this.power
 
-    this.card.append(name)
-    this.card.append(power)
+    this.cardElem.append(name)
+    this.cardElem.append(power)
 
-    parentElem.append(this.card)
+    parentElem.append(this.cardElem)
   }
 
-  getCard() {
-    return this.card
+  getCardElem() {
+    return this.cardElem
   }
 
   getOwner() {
@@ -52,15 +52,34 @@ const mainStage = document.getElementById('main-stage')
 const p1ChoiceCont = document.getElementById('p1-choice')
 const p2ChoiceCont = document.getElementById('p2-choice')
 const topStack = document.getElementById('top')
+const topWinStack = topStack.querySelectorAll('.win-stack div')
 const bottomStack = document.getElementById('bottom')
+const bottomWinStack = bottomStack.querySelectorAll('.win-stack div')
 
-const cardChoices = {
-  p1: null,
-  p2: null
+const gameInfo = {
+  p1: {
+    choice: null,
+    winStack: []
+  },
+  p2: {
+    choice: null,
+    winStack: []
+  }
 }
+
+const { p1, p2 } = gameInfo
+
 ////////////////////////////
 // Helper functions
 ////////////////////////////
+const resetCardChoices = () => {
+  p1.choice = null
+  p2.choice = null
+}
+
+const choicesFilled = () => {
+  return p1.choice !== null && p2.choice !== null
+}
 
 ////////////////////////////
 // Event listeners
@@ -80,14 +99,15 @@ const cardMouseLeave = (evt) => {
 const cardClick = (evt, card) => {
   const target = evt.target
   target.classList.add('selected')
+
   if (card.getOwner() === 'p1') {
     p1ChoiceCont.append(target)
-    cardChoices.p1 = card
-    checkWinner()
+    p1.choice = card
+    playRound()
   } else {
     p2ChoiceCont.append(target)
-    cardChoices.p2 = card
-    checkWinner()
+    p2.choice = card
+    playRound()
   }
 }
 
@@ -99,63 +119,79 @@ const createMultCards = (owner, parentElem, amount) => {
     const card = new Card(owner)
     card.createCard(parentElem)
 
-    card.getCard().addEventListener('mouseover', (evt) => {
+    card.getCardElem().addEventListener('mouseover', (evt) => {
       cardMouseOver(evt)
     })
 
-    card.getCard().addEventListener('mouseleave', (evt) => {
+    card.getCardElem().addEventListener('mouseleave', (evt) => {
       cardMouseLeave(evt)
     })
 
-    card.getCard().addEventListener('click', (evt) => {
+    card.getCardElem().addEventListener('click', (evt) => {
       cardClick(evt, card)
     })
   }
 }
 
-const checkWinner = () => {
-  if (cardChoices.p1 !== null && cardChoices.p2 !== null) {
-    const p1Troop = cardChoices.p1.troop
-    const p1Power = cardChoices.p1.power
-
-    const p2Troop = cardChoices.p2.troop
-    const p2Power = cardChoices.p2.power
-
-    const p1 = Object.keys(cardChoices)[0]
-    const p2 = Object.keys(cardChoices)[1]
+const checkRoundWinner = () => {
+  if (choicesFilled()) {
+    const p1Choice = p1.choice
+    const p2Choice = p2.choice
 
     let winner = null
-
-    if (p1Troop === p2Troop) {
-      if (p1Power === p2Power) {
+    if (p1Choice.troop === p2Choice.troop) {
+      if (p1Choice.power === p2Choice.power) {
         winner = 'none'
-      } else if (p1Power > p2Power) {
+      } else if (p1Choice.power > p2Choice.power) {
         winner = p1
       } else {
         winner = p2
       }
-    } else if (p1Troop === 'Spearmen') {
-      if (p2Troop === 'Cavalry') {
+    } else if (p1Choice.troop === 'Spearmen') {
+      if (p2Choice.troop === 'Cavalry') {
         winner = p1
       } else {
         winner = p2
       }
-    } else if (p1Troop === 'Cavalry') {
-      if (p2Troop === 'Archer') {
+    } else if (p1Choice.troop === 'Cavalry') {
+      if (p2Choice.troop === 'Archers') {
         winner = p1
       } else {
         winner = p2
       }
-    } else if (p1Troop === 'Archers') {
-      if (p2Troop === 'Spearmen') {
+    } else if (p1Choice.troop === 'Archers') {
+      if (p2Choice.troop === 'Spearmen') {
         winner = p1
       } else {
         winner = p2
       }
     }
-
-    console.log(winner)
     return winner
+  }
+}
+
+const playRound = () => {
+  if (choicesFilled()) {
+    const winner = checkRoundWinner()
+    const cardElem = winner.choice.getCardElem()
+
+    if (winner !== 'none') {
+      winner.winStack.push(winner.choice)
+    }
+
+    setTimeout(() => {
+      if (winner.choice.owner === 'p1') {
+        bottomWinStack[0].append(cardElem)
+        p2.choice.getCardElem().remove()
+      } else if (winner.choice.owner === 'p2') {
+        topWinStack[0].append(cardElem)
+        p1.choice.getCardElem().remove()
+      } else {
+        p1.choice.getCardElem().remove()
+        p2.choice.getCardElem().remove()
+      }
+      resetCardChoices()
+    }, 1000)
   }
 }
 
@@ -165,11 +201,10 @@ createMultCards('p1', bottomStack, 5)
 // button.innerText = 'test'
 // button.setAttribute('id', 'test-btn')
 // gameCont.append(button)
-// button.addEventListener('click', () => {
-//   cardChoices.p1 = new Card()
+// button.addEventListener('clonst appendToWinStack = (stack, winner) => {
 //   cardChoices.p2 = new Card()
 
 //   console.clear()
 //   console.log('Choices', cardChoices)
-//   checkWinner()
+//   checkRoundWinner()
 // })
