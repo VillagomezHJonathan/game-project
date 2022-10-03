@@ -77,8 +77,18 @@ const resetCardChoices = () => {
   p2.choice = null
 }
 
+const resetWinStack = (player) => {
+  player.winStack = []
+}
+
 const choicesFilled = () => {
   return p1.choice !== null && p2.choice !== null
+}
+
+const clearWinStackElem = (stack) => {
+  stack.forEach((div) => {
+    div.innerHTML = ''
+  })
 }
 
 ////////////////////////////
@@ -176,6 +186,18 @@ const checkRoundWinner = () => {
   }
 }
 
+const attack = () => {
+  if (p1.winStack.length === bottomWinStack.length) {
+    clearWinStackElem(bottomWinStack)
+    resetWinStack(p1)
+    console.log('p1 attacks')
+  } else if (p2.winStack.length === topWinStack.length) {
+    clearWinStackElem(topWinStack)
+    resetWinStack(p2)
+    console.log('p2 attacks')
+  }
+}
+
 const playRound = () => {
   if (choicesFilled()) {
     const winner = checkRoundWinner()
@@ -202,6 +224,7 @@ const playRound = () => {
       generateCards('p1', bottomStack, 1)
       generateCards('p2', topStack, 1)
       resetCardChoices()
+      attack()
     }, 1000)
   }
 }
