@@ -84,30 +84,36 @@ const choicesFilled = () => {
 ////////////////////////////
 // Event listeners
 ////////////////////////////
-const cardMouseOver = (evt) => {
-  const target = evt.target
-  if (!target.classList.contains('selected')) {
-    target.classList.add('hover')
+const cardMouseOver = (evt, card) => {
+  const cardElem = card.getCardElem()
+  if (!cardElem.classList.contains('selected')) {
+    cardElem.classList.add('hover')
   }
 }
 
-const cardMouseLeave = (evt) => {
-  const target = evt.target
-  target.classList.remove('hover')
+const cardMouseLeave = (evt, card) => {
+  const cardElem = card.getCardElem()
+  cardElem.classList.remove('hover')
 }
 
 const cardClick = (evt, card) => {
-  const target = evt.target
-  target.classList.add('selected')
+  const cardElem = card.getCardElem()
 
-  if (card.getOwner() === 'p1') {
-    p1ChoiceCont.append(target)
-    p1.choice = card
-    playRound()
-  } else {
-    p2ChoiceCont.append(target)
-    p2.choice = card
-    playRound()
+  if (
+    cardElem.parentElement === bottomStack ||
+    cardElem.parentElement === topStack
+  ) {
+    cardElem.classList.add('selected')
+
+    if (card.getOwner() === 'p1') {
+      p1ChoiceCont.append(cardElem)
+      p1.choice = card
+      playRound()
+    } else {
+      p2ChoiceCont.append(cardElem)
+      p2.choice = card
+      playRound()
+    }
   }
 }
 
@@ -120,11 +126,11 @@ const createMultCards = (owner, parentElem, amount) => {
     card.createCard(parentElem)
 
     card.getCardElem().addEventListener('mouseover', (evt) => {
-      cardMouseOver(evt)
+      cardMouseOver(evt, card)
     })
 
     card.getCardElem().addEventListener('mouseleave', (evt) => {
-      cardMouseLeave(evt)
+      cardMouseLeave(evt, card)
     })
 
     card.getCardElem().addEventListener('click', (evt) => {
@@ -173,25 +179,33 @@ const checkRoundWinner = () => {
 const playRound = () => {
   if (choicesFilled()) {
     const winner = checkRoundWinner()
-    if (winner !== 'none') {
-      winner.winStack.push(winner.choice)
-    }
-    const cardElem = winner.choice.getCardElem()
-    const currentWins = winner.winStack.length
 
-    setTimeout(() => {
-      if (winner.choice.owner === 'p1') {
-        bottomWinStack[currentWins - 1].append(cardElem)
-        p2.choice.getCardElem().remove()
-      } else if (winner.choice.owner === 'p2') {
-        topWinStack[currentWins - 1].append(cardElem)
+    if (winner !== 'none') {
+      // win
+      winner.winStack.push(winner.choice)
+
+      const cardElem = winner.choice.getCardElem()
+      const currentWins = winner.winStack.length
+
+      setTimeout(() => {
+        if (winner.choice.owner === 'p1') {
+          bottomWinStack[currentWins - 1].append(cardElem)
+          p2.choice.getCardElem().remove()
+        } else if (winner.choice.owner === 'p2') {
+          topWinStack[currentWins - 1].append(cardElem)
+          p1.choice.getCardElem().remove()
+        }
+        resetCardChoices()
+      }, 1000)
+    } else {
+      //draw
+      setTimeout(() => {
         p1.choice.getCardElem().remove()
-      } else {
-        p1.choice.getCardElem().remove()
         p2.choice.getCardElem().remove()
-      }
-      resetCardChoices()
-    }, 1000)
+
+        resetCardChoices()
+      }, 1000)
+    }
   }
 }
 

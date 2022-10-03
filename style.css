@@ -54,7 +54,7 @@ body {
   border-radius: 0.5rem;
 }
 
-.win-stack .card {
+.win-stack .card.selected {
   height: 75px;
   width: 75px;
   margin-left: 0;
