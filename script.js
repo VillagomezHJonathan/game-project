@@ -39,8 +39,8 @@ class Card {
     return this.owner
   }
 
-  deleteCard() {
-    this.card.remove()
+  removeCardElem() {
+    this.cardElem.remove()
   }
 }
 
@@ -242,14 +242,14 @@ const playRound = () => {
 
         if (winner.choice.owner === 'p1') {
           bottomWinStack[currentWins - 1].append(cardElem)
-          p2.choice.getCardElem().remove()
+          p2.choice.removeCardElem()
         } else if (winner.choice.owner === 'p2') {
           topWinStack[currentWins - 1].append(cardElem)
-          p1.choice.getCardElem().remove()
+          p1.choice.removeCardElem()
         }
       } else {
-        p1.choice.getCardElem().remove()
-        p2.choice.getCardElem().remove()
+        p1.choice.removeCardElem()
+        p2.choice.removeCardElem()
       }
 
       generateCards('p1', bottomStack, 1)
