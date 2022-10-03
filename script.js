@@ -53,12 +53,29 @@ class Player {
     this.homeBase = homeBase
   }
 
+  getHomeBase() {
+    return this.homeBase
+  }
+
+  getStack() {
+    return this.homeBase.querySelector('.stack')
+  }
+
+  getHealthBar() {
+    return this.homeBase.querySelector('.health .bar')
+  }
+
+  getWinsStack() {
+    return this.homeBase.querySelectorAll('.win-stack .winner')
+  }
+
   getName() {
     return this.name
   }
 
   takeDamage(amount) {
     this.health -= amount
+    this.getHealthBar().style.width = `${this.health}%`
   }
 
   getHealth() {
@@ -90,18 +107,6 @@ class Player {
     stack.append(cardElem)
   }
 
-  getHomeBase() {
-    return this.homeBase
-  }
-
-  getStack() {
-    return this.homeBase.querySelector('.stack')
-  }
-
-  getHealthBar() {
-    return this.homeBase.querySelector('.health::before')
-  }
-
   pushToWinsArr(card) {
     this.winsArr.push(card)
   }
@@ -123,9 +128,15 @@ const mainStage = document.getElementById('main-stage')
 
 const p1 = new Player('p1', document.getElementById('bottom'))
 const p1ChoiceCont = document.getElementById('p1-choice')
+const bottomWinStack = document
+  .getElementById('bottom')
+  .querySelectorAll('.win-stack .winner')
 
 const p2 = new Player('p2', document.getElementById('top'))
 const p2ChoiceCont = document.getElementById('p2-choice')
+const topWinStack = document
+  .getElementById('top')
+  .querySelectorAll('.win-stack .winner')
 
 ////////////////////////////
 // Helper functions
@@ -268,12 +279,12 @@ const checkRoundWinner = () => {
 }
 
 const attack = () => {
-  if (p1.getWinsArr().length === bottomWinStack.length) {
+  if (p1.getWinsArr().length === p1.getWinsStack().length) {
     const damage = getTotalTroopDamage(p1)
     p2.takeDamage(damage)
     clearWinStackElem(bottomWinStack)
     p1.resetWinsArr()
-  } else if (p2.getWinsArr().length === topWinStack.length) {
+  } else if (p2.getWinsArr().length === p2.getWinsStack().length) {
     const damage = getTotalTroopDamage(p2)
     p1.takeDamage(damage)
     clearWinStackElem(topWinStack)
