@@ -103,13 +103,13 @@ const cardClick = (evt, card) => {
     cardElem.parentElement === bottomStack ||
     cardElem.parentElement === topStack
   ) {
-    cardElem.classList.add('selected')
-
-    if (card.getOwner() === 'p1') {
+    if (card.getOwner() === 'p1' && p1.choice === null) {
+      cardElem.classList.add('selected')
       p1ChoiceCont.append(cardElem)
       p1.choice = card
       playRound()
-    } else {
+    } else if (card.getOwner() === 'p2' && p2.choice === null) {
+      cardElem.classList.add('selected')
       p2ChoiceCont.append(cardElem)
       p2.choice = card
       playRound()
@@ -120,7 +120,7 @@ const cardClick = (evt, card) => {
 ////////////////////////////
 // Game functions
 ////////////////////////////
-const createMultCards = (owner, parentElem, amount) => {
+const generateCards = (owner, parentElem, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card(owner)
     card.createCard(parentElem)
@@ -180,14 +180,13 @@ const playRound = () => {
   if (choicesFilled()) {
     const winner = checkRoundWinner()
 
-    if (winner !== 'none') {
-      // win
-      winner.winStack.push(winner.choice)
+    setTimeout(() => {
+      if (winner !== 'none') {
+        winner.winStack.push(winner.choice)
 
-      const cardElem = winner.choice.getCardElem()
-      const currentWins = winner.winStack.length
+        const cardElem = winner.choice.getCardElem()
+        const currentWins = winner.winStack.length
 
-      setTimeout(() => {
         if (winner.choice.owner === 'p1') {
           bottomWinStack[currentWins - 1].append(cardElem)
           p2.choice.getCardElem().remove()
@@ -195,22 +194,20 @@ const playRound = () => {
           topWinStack[currentWins - 1].append(cardElem)
           p1.choice.getCardElem().remove()
         }
-        resetCardChoices()
-      }, 1000)
-    } else {
-      //draw
-      setTimeout(() => {
+      } else {
         p1.choice.getCardElem().remove()
         p2.choice.getCardElem().remove()
+      }
 
-        resetCardChoices()
-      }, 1000)
-    }
+      generateCards('p1', bottomStack, 1)
+      generateCards('p2', topStack, 1)
+      resetCardChoices()
+    }, 1000)
   }
 }
 
-createMultCards('p2', topStack, 5)
-createMultCards('p1', bottomStack, 5)
+generateCards('p1', bottomStack, 5)
+generateCards('p2', topStack, 5)
 // const button = document.createElement('button')
 // button.innerText = 'test'
 // button.setAttribute('id', 'test-btn')
