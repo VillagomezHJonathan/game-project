@@ -1,4 +1,4 @@
-# Game Project
+# Battle Cards
 
 ## Date: 6/20/2022
 
@@ -12,7 +12,7 @@
 
 ### **_Description_**
 
-#### A brief description of the project
+#### A card game where where you battle it out tring to get the opposing player down to no health.
 
 ---
 
@@ -28,7 +28,7 @@
 
 ### **_Getting Started_**
 
-#### Getting started with the project
+#### Each win puts a troop in the win stack and after there's four you attack the other player doing the combined power worth of damage to them, first person to drop the others health to 0 wins.
 
 ---
 
@@ -49,6 +49,8 @@
 ---
 
 ### **_Credits_**
+
+#### [Trello](https://trello.com/b/jTUqK2xY/battle-cards)
 
 #### Image: [iStock](https://www.istockphoto.com/photo/programming-code-abstract-technology-background-of-software-deve-gm537331500-95204155)
 

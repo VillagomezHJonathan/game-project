@@ -173,18 +173,18 @@ const checkRoundWinner = () => {
 const playRound = () => {
   if (choicesFilled()) {
     const winner = checkRoundWinner()
-    const cardElem = winner.choice.getCardElem()
-
     if (winner !== 'none') {
       winner.winStack.push(winner.choice)
     }
+    const cardElem = winner.choice.getCardElem()
+    const currentWins = winner.winStack.length
 
     setTimeout(() => {
       if (winner.choice.owner === 'p1') {
-        bottomWinStack[0].append(cardElem)
+        bottomWinStack[currentWins - 1].append(cardElem)
         p2.choice.getCardElem().remove()
       } else if (winner.choice.owner === 'p2') {
-        topWinStack[0].append(cardElem)
+        topWinStack[currentWins - 1].append(cardElem)
         p1.choice.getCardElem().remove()
       } else {
         p1.choice.getCardElem().remove()
