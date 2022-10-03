@@ -57,6 +57,14 @@ class Player {
     return this.name
   }
 
+  takeDamage(amount) {
+    this.health -= amount
+  }
+
+  getHealth() {
+    return this.health
+  }
+
   setChoice(choice) {
     this.choice = choice
   }
@@ -90,6 +98,10 @@ class Player {
     return this.homeBase.querySelector('.stack')
   }
 
+  getHealthBar() {
+    return this.homeBase.querySelector('.health::before')
+  }
+
   pushToWinsArr(card) {
     this.winsArr.push(card)
   }
@@ -108,19 +120,6 @@ class Player {
 ////////////////////////////
 const gameCont = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
-
-const p1Health = document
-  .getElementById('bottom')
-  .querySelector('.health::before')
-const p2Health = document.getElementById('top').querySelector('.health::before')
-
-const topWinStack = document
-  .getElementById('top')
-  .querySelectorAll('.win-stack div')
-
-const bottomWinStack = document
-  .getElementById('bottom')
-  .querySelectorAll('.win-stack div')
 
 const p1 = new Player('p1', document.getElementById('bottom'))
 const p1ChoiceCont = document.getElementById('p1-choice')
@@ -158,15 +157,17 @@ const updateWinStack = (player) => {
   stackDiv[currentWinPos].append(player.getChoice().getCardElem())
 }
 
-const getTotalDamage = (player) => {
+const getTotalTroopDamage = (player) => {
   const winArr = player.getWinsArr()
 
-  const total = winArr.reduce((prev, cur) => prev.power + cur.power, 0)
+  let total = 0
+
+  winArr.forEach((win) => {
+    total += win.power
+  })
 
   return total
 }
-
-getTotalDamage(p1)
 
 ////////////////////////////
 // Event listeners
@@ -268,9 +269,13 @@ const checkRoundWinner = () => {
 
 const attack = () => {
   if (p1.getWinsArr().length === bottomWinStack.length) {
+    const damage = getTotalTroopDamage(p1)
+    p2.takeDamage(damage)
     clearWinStackElem(bottomWinStack)
     p1.resetWinsArr()
   } else if (p2.getWinsArr().length === topWinStack.length) {
+    const damage = getTotalTroopDamage(p2)
+    p1.takeDamage(damage)
     clearWinStackElem(topWinStack)
     p2.resetWinsArr()
   }
