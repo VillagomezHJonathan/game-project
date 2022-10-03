@@ -13,7 +13,7 @@ class Card {
     this.power = randPower
   }
 
-  createCard(parentElem) {
+  aignCard(player) {
     this.cardElem = document.createElement('div')
     this.cardElem.classList.add('card')
 
@@ -28,7 +28,7 @@ class Card {
     this.cardElem.append(name)
     this.cardElem.append(power)
 
-    parentElem.append(this.cardElem)
+    player.append(this.cardElem)
   }
 
   getCardElem() {
@@ -44,45 +44,76 @@ class Card {
   }
 }
 
+class Player {
+  constructor(name) {
+    this.name = name
+    this.choice = null
+    this.health = 100
+    this.winStack = []
+  }
+
+  getName() {
+    return this.name
+  }
+
+  setChoice(choice) {
+    this.choice = choice
+  }
+
+  getChoice() {
+    return this.choice
+  }
+
+  pushToWinStack(card) {
+    this.winStack.push(card)
+  }
+
+  getWinStack() {
+    return this.winStack
+  }
+
+  resetWinStack() {
+    this.winStack = []
+  }
+}
+
 ////////////////////////////
 // Global variables
 ////////////////////////////
 const gameCont = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
+
 const p1ChoiceCont = document.getElementById('p1-choice')
 const p2ChoiceCont = document.getElementById('p2-choice')
-const topStack = document.getElementById('top')
-const topWinStack = topStack.querySelectorAll('.win-stack div')
-const bottomStack = document.getElementById('bottom')
-const bottomWinStack = bottomStack.querySelectorAll('.win-stack div')
 
-const gameInfo = {
-  p1: {
-    choice: null,
-    winStack: []
-  },
-  p2: {
-    choice: null,
-    winStack: []
-  }
-}
+const p1Health = document
+  .getElementById('bottom')
+  .querySelector('.health::before')
+const p2Health = document.getElementById('top').querySelector('.health::before')
 
-const { p1, p2 } = gameInfo
+const topStack = document.getElementById('top').querySelector('.stack')
+const topWinStack = document
+  .getElementById('top')
+  .querySelectorAll('.win-stack div')
+
+const bottomStack = document.getElementById('bottom').querySelector('.stack')
+const bottomWinStack = document
+  .getElementById('bottom')
+  .querySelectorAll('.win-stack div')
+
+const p1 = new Player('p1')
+const p2 = new Player('p2')
 
 ////////////////////////////
 // Helper functions
 ////////////////////////////
 const resetCardChoices = () => {
-  p1.choice = null
-  p2.choice = null
-}
-
-const resetWinStack = (player) => {
-  player.winStack = []
+  p1.setChoice(null)
+  p2.setChoice(null)
 }
 
 const choicesFilled = () => {
-  return p1.choice !== null && p2.choice !== null
+  return p1.getChoice() !== null && p2.getChoice() !== null
 }
 
 const clearWinStackElem = (stack) => {
@@ -113,15 +144,15 @@ const cardClick = (evt, card) => {
     cardElem.parentElement === bottomStack ||
     cardElem.parentElement === topStack
   ) {
-    if (card.getOwner() === 'p1' && p1.choice === null) {
+    if (card.getOwner() === p1.getName() && p1.getChoice() === null) {
       cardElem.classList.add('selected')
       p1ChoiceCont.append(cardElem)
-      p1.choice = card
+      p1.setChoice(card)
       playRound()
-    } else if (card.getOwner() === 'p2' && p2.choice === null) {
+    } else if (card.getOwner() === p2.getName() && p2.getChoice() === null) {
       cardElem.classList.add('selected')
       p2ChoiceCont.append(cardElem)
-      p2.choice = card
+      p2.setChoice(card)
       playRound()
     }
   }
@@ -130,10 +161,10 @@ const cardClick = (evt, card) => {
 ////////////////////////////
 // Game functions
 ////////////////////////////
-const generateCards = (owner, parentElem, amount) => {
+const generateCards = (owner, player, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card(owner)
-    card.createCard(parentElem)
+    card.aignCard(player)
 
     card.getCardElem().addEventListener('mouseover', (evt) => {
       cardMouseOver(evt, card)
@@ -151,8 +182,8 @@ const generateCards = (owner, parentElem, amount) => {
 
 const checkRoundWinner = () => {
   if (choicesFilled()) {
-    const p1Choice = p1.choice
-    const p2Choice = p2.choice
+    const p1Choice = p1.getChoice()
+    const p2Choice = p2.getChoice()
 
     let winner = null
     if (p1Choice.troop === p2Choice.troop) {
@@ -187,13 +218,13 @@ const checkRoundWinner = () => {
 }
 
 const attack = () => {
-  if (p1.winStack.length === bottomWinStack.length) {
+  if (p1.getWinStack().length === bottomWinStack.length) {
     clearWinStackElem(bottomWinStack)
-    resetWinStack(p1)
+    p1.resetWinStack()
     console.log('p1 attacks')
-  } else if (p2.winStack.length === topWinStack.length) {
+  } else if (p2.getWinStack().length === topWinStack.length) {
     clearWinStackElem(topWinStack)
-    resetWinStack(p2)
+    p2.resetWinStack()
     console.log('p2 attacks')
   }
 }
@@ -204,10 +235,10 @@ const playRound = () => {
 
     setTimeout(() => {
       if (winner !== 'none') {
-        winner.winStack.push(winner.choice)
+        winner.pushToWinStack(winner.choice)
 
-        const cardElem = winner.choice.getCardElem()
-        const currentWins = winner.winStack.length
+        const cardElem = winner.getChoice().getCardElem()
+        const currentWins = winner.getWinStack().length
 
         if (winner.choice.owner === 'p1') {
           bottomWinStack[currentWins - 1].append(cardElem)

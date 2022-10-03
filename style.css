@@ -35,21 +35,45 @@ body {
   transform: rotate(180deg);
 }
 
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.health {
+  height: 10px;
+  width: 400px;
+  margin-bottom: 2rem;
+  position: relative;
+  background-color: black;
+}
+
+.health, .health::before {
+  border-radius: 1rem;
+}
+
+.health::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-color: green;
+}
+
 .win-stack {
   width: 100%;
   display: flex;
   justify-content: center;
-  position: absolute;
-  left: 0;
-  top: 0;
-  margin-right: 2rem;
-  margin-top: -5.5rem;
 }
 
 .win-stack div {
   height: 75px;
   width: 75px;
-  margin-right: 0.5rem;
+  margin: 0 0.5rem;
   border: 1px solid black;
   border-radius: 0.5rem;
 }
