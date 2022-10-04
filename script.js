@@ -61,6 +61,10 @@ class Player {
     return this.homeBase.querySelector('.stack')
   }
 
+  resetStackElem() {
+    this.getStackElem().innerHTML = ''
+  }
+
   getHealthBarElem() {
     return this.homeBase.querySelector('.health .bar')
   }
@@ -121,6 +125,16 @@ class Player {
   resetWinsArr() {
     this.winsArr = []
   }
+
+  reset() {
+    this.health = 100
+    this.getHealthBarElem().style.width = `${this.health}%`
+    this.resetWinsArr()
+    p1.resetStackElem()
+    generateCards(p1, 5)
+    p2.resetStackElem()
+    generateCards(p2, 5)
+  }
 }
 
 ////////////////////////////
@@ -164,7 +178,7 @@ const clearWinStackElem = (stack) => {
   })
 }
 
-const updateWinStack = (player) => {
+const updateWinStackElem = (player) => {
   const stackDiv = player.getHomeBase().querySelectorAll('.win-stack .winner')
   const currentWinPos = player.getWinsArr().length - 1
 
@@ -181,6 +195,13 @@ const getTotalTroopDamage = (player) => {
   })
 
   return total
+}
+
+const resetGame = () => {
+  p1.reset()
+  p2.reset()
+  clearWinStackElem(bottomWinStack)
+  clearWinStackElem(topWinStack)
 }
 
 ////////////////////////////
@@ -224,13 +245,13 @@ const cardClick = (evt, card) => {
 
 const restartBtnHandler = (evt) => {
   const parent = document.querySelector('.game-over')
-
+  resetGame()
   parent.remove()
 }
 
 const menuBtnHandler = (evt) => {
   const parent = document.querySelector('.game-over')
-
+  resetGame()
   parent.remove()
 }
 
@@ -262,7 +283,7 @@ const generateGameOverScene = (winner) => {
   document.body.append(container)
 }
 
-generateGameOverScene(p1.getName())
+// generateGameOverScene(p1.getName())
 
 ////////////////////////////
 // Game functions
@@ -358,10 +379,10 @@ const playRound = () => {
         winner.pushToWinsArr(winner.choice)
 
         if (winner.getName() === p1.getName()) {
-          updateWinStack(p1)
+          updateWinStackElem(p1)
           p2.removeChoiceElem()
         } else if (winner.getName() === p2.getName()) {
-          updateWinStack(p2)
+          updateWinStackElem(p2)
           p1.removeChoiceElem()
         }
       } else {
