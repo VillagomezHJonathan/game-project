@@ -223,11 +223,15 @@ const cardClick = (evt, card) => {
 }
 
 const restartBtnHandler = (evt) => {
-  console.log('restart')
+  const parent = document.querySelector('.game-over')
+
+  parent.remove()
 }
 
 const menuBtnHandler = (evt) => {
-  console.log('restart')
+  const parent = document.querySelector('.game-over')
+
+  parent.remove()
 }
 
 ////////////////////////////
@@ -241,9 +245,11 @@ const generateGameOverScene = (winner) => {
   winnerP.innerText = `${winner} is the winner!`
 
   const restartBtn = document.createElement('button')
+  restartBtn.innerText = 'Restart'
   restartBtn.addEventListener('click', restartBtnHandler)
 
   const menuBtn = document.createElement('button')
+  menuBtn.innerText = 'Main Menu'
   menuBtn.addEventListener('click', menuBtnHandler)
 
   const inputContainer = document.createElement('div')
@@ -256,9 +262,7 @@ const generateGameOverScene = (winner) => {
   document.body.append(container)
 }
 
-console.log(document.body)
-
-// generateGameOverScene(p1.getName())
+generateGameOverScene(p1.getName())
 
 ////////////////////////////
 // Game functions
