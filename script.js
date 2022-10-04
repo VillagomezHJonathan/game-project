@@ -5,7 +5,7 @@ class Card {
   constructor(owner) {
     const troopOptions = ['Spearmen', 'Cavalry', 'Archers']
     const randTroop = Math.floor(Math.random() * troopOptions.length)
-    const randPower = Math.floor(Math.random() * 10 + 1)
+    const randPower = Math.floor(Math.random() * 15 + 1)
 
     this.owner = owner
     this.cardElem = null
@@ -57,15 +57,15 @@ class Player {
     return this.homeBase
   }
 
-  getStack() {
+  getStackElem() {
     return this.homeBase.querySelector('.stack')
   }
 
-  getHealthBar() {
+  getHealthBarElem() {
     return this.homeBase.querySelector('.health .bar')
   }
 
-  getWinsStack() {
+  getWinsStackElem() {
     return this.homeBase.querySelectorAll('.win-stack .winner')
   }
 
@@ -73,13 +73,20 @@ class Player {
     return this.name
   }
 
-  takeDamage(amount) {
-    this.health -= amount
-    this.getHealthBar().style.width = `${this.health}%`
-  }
-
   getHealth() {
     return this.health
+  }
+
+  takeDamage(amount) {
+    this.health -= amount
+    if (this.health <= 0) {
+      this.health = 0
+    }
+    this.getHealthBarElem().style.width = `${this.health}%`
+  }
+
+  getChoice() {
+    return this.choice
   }
 
   setChoice(choice) {
@@ -98,11 +105,7 @@ class Player {
     destination.append(this.choice.getCardElem())
   }
 
-  getChoice() {
-    return this.choice
-  }
-
-  appendToStack(cardElem) {
+  appendToStackElem(cardElem) {
     const stack = this.homeBase.querySelector('.stack')
     stack.append(cardElem)
   }
@@ -199,8 +202,8 @@ const cardClick = (evt, card) => {
   const cardElem = card.getCardElem()
 
   if (
-    cardElem.parentElement === p1.getStack() ||
-    cardElem.parentElement === p2.getStack()
+    cardElem.parentElement === p1.getStackElem() ||
+    cardElem.parentElement === p2.getStackElem()
   ) {
     if (card.getOwner().getName() === p1.getName() && p1.getChoice() === null) {
       cardElem.classList.add('selected')
@@ -219,13 +222,51 @@ const cardClick = (evt, card) => {
   }
 }
 
+const restartBtnHandler = (evt) => {
+  console.log('restart')
+}
+
+const menuBtnHandler = (evt) => {
+  console.log('restart')
+}
+
+////////////////////////////
+// Scene creation functions
+////////////////////////////
+const generateGameOverScene = (winner) => {
+  const container = document.createElement('div')
+  container.classList.add('game-over')
+
+  const winnerP = document.createElement('p')
+  winnerP.innerText = `${winner} is the winner!`
+
+  const restartBtn = document.createElement('button')
+  restartBtn.addEventListener('click', restartBtnHandler)
+
+  const menuBtn = document.createElement('button')
+  menuBtn.addEventListener('click', menuBtnHandler)
+
+  const inputContainer = document.createElement('div')
+  inputContainer.append(restartBtn)
+  inputContainer.append(menuBtn)
+
+  container.append(winnerP)
+  container.append(inputContainer)
+
+  document.body.append(container)
+}
+
+console.log(document.body)
+
+// generateGameOverScene(p1.getName())
+
 ////////////////////////////
 // Game functions
 ////////////////////////////
 const generateCards = (owner, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card(owner)
-    owner.appendToStack(card.makeCard())
+    owner.appendToStackElem(card.makeCard())
 
     card.getCardElem().addEventListener('mouseover', (evt) => {
       cardMouseOver(evt, card)
@@ -278,13 +319,25 @@ const checkRoundWinner = () => {
   }
 }
 
+const checkGameWinner = () => {
+  let winner = null
+
+  if (p1.getHealth() <= 0) {
+    winner = p2
+  } else if (p2.getHealth() <= 0) {
+    winner = p1
+  }
+
+  return winner
+}
+
 const attack = () => {
-  if (p1.getWinsArr().length === p1.getWinsStack().length) {
+  if (p1.getWinsArr().length === p1.getWinsStackElem().length) {
     const damage = getTotalTroopDamage(p1)
     p2.takeDamage(damage)
     clearWinStackElem(bottomWinStack)
     p1.resetWinsArr()
-  } else if (p2.getWinsArr().length === p2.getWinsStack().length) {
+  } else if (p2.getWinsArr().length === p2.getWinsStackElem().length) {
     const damage = getTotalTroopDamage(p2)
     p1.takeDamage(damage)
     clearWinStackElem(topWinStack)
@@ -316,6 +369,11 @@ const playRound = () => {
       generateCards(p1, 1)
       generateCards(p2, 1)
       attack()
+      if (checkGameWinner() !== null) {
+        const gameWinner = checkGameWinner()
+
+        generateGameOverScene(gameWinner)
+      }
     }, 1000)
   }
 }
