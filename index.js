@@ -2,7 +2,13 @@ const input = document.getElementById('name')
 const playBtn = document.getElementById('play-btn')
 const menuBtn = document.getElementById('how-btn')
 
-const rules = ['rule', 'rule', 'rule', 'rule', 'rule', 'rule', 'rule', 'rule']
+const rules = [
+  'Spearmen beats Cavalry, Cavalry beats Archers, and Archers beats Cavalry',
+  'If two cards of the same troop are drawn the one with the higher power rating wins',
+  'After four wins you attack the enemy',
+  'Damage dealt is calculated using the sum of power of the four cards',
+  'First player to kill the other one wins'
+]
 
 const playBtnHandler = (evt) => {
   window.location.href = `${window.origin}/game.html`

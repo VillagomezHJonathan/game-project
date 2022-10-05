@@ -5,7 +5,7 @@ class Card {
   constructor(owner) {
     const troopOptions = ['Spearmen', 'Cavalry', 'Archers']
     const randTroop = Math.floor(Math.random() * troopOptions.length)
-    const randPower = Math.floor(Math.random() * 15 + 1)
+    const randPower = Math.floor(Math.random() * 20 + 1)
 
     this.owner = owner
     this.cardElem = null
@@ -48,8 +48,9 @@ class Player {
   constructor(name, homeBase) {
     this.name = name
     this.choice = null
-    this.health = 10
+    this.health = 100
     this.winsArr = []
+    this.cardStack = []
     this.homeBase = homeBase
   }
 
@@ -114,6 +115,24 @@ class Player {
     stack.append(cardElem)
   }
 
+  pushToCardStack(card) {
+    this.cardStack.push(card)
+  }
+
+  getCardStack() {
+    return this.cardStack
+  }
+
+  resetCardStack() {
+    this.cardStack = []
+  }
+
+  removeFromCardStack() {
+    const cardStack = this.getCardStack()
+    console.log()
+    cardStack.splice(cardStack.indexOf(this.getChoice()), 1)
+  }
+
   pushToWinsArr(card) {
     this.winsArr.push(card)
   }
@@ -130,10 +149,15 @@ class Player {
     this.health = 100
     this.getHealthBarElem().style.width = `${this.health}%`
     this.resetWinsArr()
-    p1.resetStackElem()
-    generateCards(p1, 5)
-    p2.resetStackElem()
-    generateCards(p2, 5)
+    this.resetStackElem()
+    this.resetCardStack()
+  }
+
+  automaticChoice() {
+    const cardStack = this.getCardStack()
+    const randNum = Math.floor(Math.random() * cardStack.length)
+
+    this.setChoice(cardStack[randNum])
   }
 }
 
@@ -202,6 +226,8 @@ const resetGame = () => {
   p2.reset()
   clearWinStackElem(bottomWinStack)
   clearWinStackElem(topWinStack)
+  generateCards(p1, 5)
+  generateCards(p2, 5)
 }
 
 ////////////////////////////
@@ -222,22 +248,12 @@ const cardMouseLeave = (evt, card) => {
 const cardClick = (evt, card) => {
   const cardElem = card.getCardElem()
 
-  if (
-    cardElem.parentElement === p1.getStackElem() ||
-    cardElem.parentElement === p2.getStackElem()
-  ) {
-    if (card.getOwner().getName() === p1.getName() && p1.getChoice() === null) {
+  if (cardElem.parentElement === p1.getStackElem()) {
+    if (p1.getChoice() === null) {
       cardElem.classList.add('selected')
       p1.setChoice(card)
       p1.appendChoiceElem(p1ChoiceCont)
-      playRound()
-    } else if (
-      card.getOwner().getName() === p2.getName() &&
-      p2.getChoice() === null
-    ) {
-      cardElem.classList.add('selected')
-      p2.setChoice(card)
-      p2.appendChoiceElem(p2ChoiceCont)
+      p1.removeFromCardStack()
       playRound()
     }
   }
@@ -290,19 +306,23 @@ const generateGameOverScene = (winner) => {
 const generateCards = (owner, amount) => {
   for (let i = 0; i < amount; i++) {
     const card = new Card(owner)
+    owner.pushToCardStack(card)
     owner.appendToStackElem(card.makeCard())
+    if (owner === p1) {
+      card.getCardElem().addEventListener('mouseover', (evt) => {
+        cardMouseOver(evt, card)
+      })
 
-    card.getCardElem().addEventListener('mouseover', (evt) => {
-      cardMouseOver(evt, card)
-    })
+      card.getCardElem().addEventListener('mouseleave', (evt) => {
+        cardMouseLeave(evt, card)
+      })
 
-    card.getCardElem().addEventListener('mouseleave', (evt) => {
-      cardMouseLeave(evt, card)
-    })
-
-    card.getCardElem().addEventListener('click', (evt) => {
-      cardClick(evt, card)
-    })
+      card.getCardElem().addEventListener('click', (evt) => {
+        cardClick(evt, card)
+      })
+    } else if (owner === p2) {
+      card.getCardElem().classList.add('hide')
+    }
   }
 }
 
@@ -370,48 +390,53 @@ const attack = () => {
 }
 
 const playRound = () => {
-  if (choicesFilled()) {
-    const winner = checkRoundWinner()
+  setTimeout(() => {
+    computerChoice()
 
-    setTimeout(() => {
-      if (winner !== 'none') {
-        winner.pushToWinsArr(winner.choice)
+    if (choicesFilled()) {
+      const winner = checkRoundWinner()
 
-        if (winner.getName() === p1.getName()) {
-          updateWinStackElem(p1)
-          p2.removeChoiceElem()
-        } else if (winner.getName() === p2.getName()) {
-          updateWinStackElem(p2)
-          p1.removeChoiceElem()
+      setTimeout(() => {
+        if (winner !== 'none') {
+          winner.pushToWinsArr(winner.choice)
+
+          if (winner.getName() === p1.getName()) {
+            updateWinStackElem(p1)
+            p2.removeChoiceElem()
+          } else if (winner.getName() === p2.getName()) {
+            updateWinStackElem(p2)
+            p1.removeChoiceElem()
+          }
+        } else {
+          removeCardChoicesElems()
         }
-      } else {
-        removeCardChoicesElems()
-      }
 
-      p1.resetChoice()
-      p2.resetChoice()
-      generateCards(p1, 1)
-      generateCards(p2, 1)
-      attack()
-      if (checkGameWinner() !== null) {
-        const gameWinner = checkGameWinner().getName()
-
-        generateGameOverScene(gameWinner)
-      }
-    }, 1000)
-  }
+        p1.resetChoice()
+        p2.resetChoice()
+        generateCards(p1, 1)
+        generateCards(p2, 1)
+        attack()
+        if (checkGameWinner() !== null) {
+          const gameWinner = checkGameWinner().getName()
+          generateGameOverScene(gameWinner)
+        }
+      }, 1000)
+    }
+  }, 500)
 }
 
 generateCards(p1, 5)
 generateCards(p2, 5)
-// const button = document.createElement('button')
-// button.innerText = 'test'
-// button.setAttribute('id', 'test-btn')
-// gameCont.append(button)
-// button.addEventListener('clonst appendToWinStack = (stack, winner) => {
-//   cardChoices.p2 = new Card()
 
-//   console.clear()
-//   console.log('Choices', cardChoices)
-//   checkRoundWinner()
-// })
+////////////////////////////
+// Computer
+////////////////////////////
+const computerChoice = () => {
+  p2.automaticChoice()
+  const choiceElem = p2.getChoice().getCardElem()
+  choiceElem.classList.add('selected')
+  choiceElem.classList.remove('hide')
+
+  p2.appendChoiceElem(p2ChoiceCont)
+  p2.removeFromCardStack()
+}
