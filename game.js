@@ -48,7 +48,7 @@ class Player {
   constructor(name, homeBase) {
     this.name = name
     this.choice = null
-    this.health = 100
+    this.health = 10
     this.winsArr = []
     this.homeBase = homeBase
   }
@@ -143,13 +143,13 @@ class Player {
 const gameCont = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
 
-const p1 = new Player('p1', document.getElementById('bottom'))
+const p1 = new Player('Player', document.getElementById('bottom'))
 const p1ChoiceCont = document.getElementById('p1-choice')
 const bottomWinStack = document
   .getElementById('bottom')
   .querySelectorAll('.win-stack .winner')
 
-const p2 = new Player('p2', document.getElementById('top'))
+const p2 = new Player('Computer', document.getElementById('top'))
 const p2ChoiceCont = document.getElementById('p2-choice')
 const topWinStack = document
   .getElementById('top')
@@ -252,6 +252,7 @@ const restartBtnHandler = (evt) => {
 const menuBtnHandler = (evt) => {
   const parent = document.querySelector('.game-over')
   resetGame()
+  window.location.href = window.origin
   parent.remove()
 }
 
@@ -282,8 +283,6 @@ const generateGameOverScene = (winner) => {
 
   document.body.append(container)
 }
-
-// generateGameOverScene(p1.getName())
 
 ////////////////////////////
 // Game functions
@@ -395,7 +394,7 @@ const playRound = () => {
       generateCards(p2, 1)
       attack()
       if (checkGameWinner() !== null) {
-        const gameWinner = checkGameWinner()
+        const gameWinner = checkGameWinner().getName()
 
         generateGameOverScene(gameWinner)
       }

@@ -10,7 +10,8 @@ body {
   overflow: hidden;
 }
 
-.game-over {
+.game-over,
+.how-to {
   width: 100%;
   height: 100%;
   position: absolute;
