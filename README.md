@@ -49,3 +49,5 @@
 ### **_Credits_**
 
 #### Markdown HW: [GitHub](https://github.com/VillagomezHJonathan/u1_hw_markdown)
+
+#### Window Location: [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Window/location)

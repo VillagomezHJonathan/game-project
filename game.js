@@ -298,12 +298,6 @@ const generateGameOverScene = (winner = '') => {
   const wrapper = document.createElement('div')
   wrapper.classList.add('wrapper')
 
-  if (winner !== '') {
-    const winnerP = document.createElement('p')
-    winnerP.innerText = `${winner} is the winner!`
-    wrapper.append(winnerP)
-  }
-
   const restartBtn = document.createElement('button')
   restartBtn.classList.add('btn')
   restartBtn.innerText = 'Restart'
@@ -320,9 +314,18 @@ const generateGameOverScene = (winner = '') => {
   dismissBtn.addEventListener('click', dissmissBtnHandler)
 
   const inputContainer = document.createElement('div')
+  inputContainer.classList.add('inputs')
   inputContainer.append(restartBtn)
   inputContainer.append(menuBtn)
   inputContainer.append(dismissBtn)
+
+  if (winner !== '') {
+    const winnerP = document.createElement('p')
+    winnerP.classList.add('winner-text')
+    winnerP.innerText = `${winner} is the winner!`
+    wrapper.append(winnerP)
+    dismissBtn.remove()
+  }
 
   wrapper.append(inputContainer)
 
