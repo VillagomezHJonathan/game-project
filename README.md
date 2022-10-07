@@ -18,11 +18,9 @@
 
 ### **_Technologies Used_**
 
-- Tech 1
-- Tech 2
-- Tech 3
-  - Tech 3 sub item
-- Tech 4
+- HTML
+- CSS
+- Javascript
 
 ---
 
@@ -34,24 +32,20 @@
 
 ### **_Screenshots_**
 
-#### Image 1 header
+![Image](https://i.imgur.com/KeTDq7n.png)
 
-![Image](https://media.istockphoto.com/photos/programming-code-abstract-technology-background-of-software-deve-picture-id537331500?k=20&m=537331500&s=612x612&w=0&h=vnE5e_eExMtetDyYBTBoORFkxiK02o9H6KfgFwvKt4c=)
+![Image](https://i.imgur.com/df3lnHa.png)
+
+![Image](https://i.imgur.com/GgwaGXE.png)
 
 ---
 
 ### **_Task List_**
 
-- [ ] Task 1
-- [ ] Task 2
-- [x] ~~Task 3~~
+#### [Check out my Trello board!](https://trello.com/b/jTUqK2xY/battle-cards)
 
 ---
 
 ### **_Credits_**
-
-#### [Trello](https://trello.com/b/jTUqK2xY/battle-cards)
-
-#### Image: [iStock](https://www.istockphoto.com/photo/programming-code-abstract-technology-background-of-software-deve-gm537331500-95204155)
 
 #### Markdown HW: [GitHub](https://github.com/VillagomezHJonathan/u1_hw_markdown)
