@@ -5,7 +5,7 @@ class Card {
   constructor(owner) {
     const troopOptions = ['Spearmen', 'Cavalry', 'Archers']
     const randTroop = Math.floor(Math.random() * troopOptions.length)
-    const randPower = Math.floor(Math.random() * 20 + 1)
+    const randPower = Math.floor(Math.random() * 15 + 1)
 
     this.owner = owner
     this.cardElem = null
@@ -166,6 +166,7 @@ class Player {
 ////////////////////////////
 const gameCont = document.getElementById('game-container')
 const mainStage = document.getElementById('main-stage')
+const pauseBtn = document.getElementById('pause-btn')
 
 const p1 = new Player('Player', document.getElementById('bottom'))
 const p1ChoiceCont = document.getElementById('p1-choice')
@@ -259,43 +260,73 @@ const cardClick = (evt, card) => {
   }
 }
 
+const dissmissBtnHandler = (evt) => {
+  pauseBtn.classList.remove('hide')
+  const parent = document.querySelector('.alert')
+  parent.remove()
+}
+
 const restartBtnHandler = (evt) => {
-  const parent = document.querySelector('.game-over')
+  pauseBtn.classList.remove('hide')
+  const parent = document.querySelector('.alert')
   resetGame()
   parent.remove()
 }
 
 const menuBtnHandler = (evt) => {
-  const parent = document.querySelector('.game-over')
+  pauseBtn.classList.remove('hide')
+  const parent = document.querySelector('.alert')
   resetGame()
   window.location.href = window.origin
   parent.remove()
 }
 
+const pauseBtnHandler = (evt) => {
+  generateGameOverScene()
+}
+pauseBtn.addEventListener('click', pauseBtnHandler)
+
 ////////////////////////////
 // Scene creation functions
 ////////////////////////////
-const generateGameOverScene = (winner) => {
-  const container = document.createElement('div')
-  container.classList.add('game-over')
+const generateGameOverScene = (winner = '') => {
+  pauseBtn.classList.add('hide')
 
-  const winnerP = document.createElement('p')
-  winnerP.innerText = `${winner} is the winner!`
+  const container = document.createElement('div')
+  container.classList.add('alert')
+
+  const wrapper = document.createElement('div')
+  wrapper.classList.add('wrapper')
+
+  if (winner !== '') {
+    const winnerP = document.createElement('p')
+    winnerP.innerText = `${winner} is the winner!`
+    wrapper.append(winnerP)
+  }
 
   const restartBtn = document.createElement('button')
+  restartBtn.classList.add('btn')
   restartBtn.innerText = 'Restart'
   restartBtn.addEventListener('click', restartBtnHandler)
 
   const menuBtn = document.createElement('button')
+  menuBtn.classList.add('btn')
   menuBtn.innerText = 'Main Menu'
   menuBtn.addEventListener('click', menuBtnHandler)
+
+  const dismissBtn = document.createElement('button')
+  dismissBtn.classList.add('btn')
+  dismissBtn.innerText = 'Cancel'
+  dismissBtn.addEventListener('click', dissmissBtnHandler)
 
   const inputContainer = document.createElement('div')
   inputContainer.append(restartBtn)
   inputContainer.append(menuBtn)
+  inputContainer.append(dismissBtn)
 
-  container.append(winnerP)
-  container.append(inputContainer)
+  wrapper.append(inputContainer)
+
+  container.append(wrapper)
 
   document.body.append(container)
 }

@@ -18,16 +18,19 @@ const menuBtnHandler = (evt) => {
   generateHowTo()
 }
 
-const dismissMenuHandler = (evt) => {
-  const parent = document.querySelector('.how-to')
+const dissmissBtnHandler = (evt) => {
+  const parent = document.querySelector('.alert')
   parent.remove()
 }
 
 const generateHowTo = () => {
   const container = document.createElement('div')
-  container.classList.add('how-to')
+  container.classList.add('alert')
 
-  const h2 = document.createElement('div')
+  const wrapper = document.createElement('div')
+  wrapper.classList.add('wrapper')
+
+  const h2 = document.createElement('h2')
   h2.innerText = 'How To Play'
 
   const ul = document.createElement('ul')
@@ -39,12 +42,15 @@ const generateHowTo = () => {
   }
 
   const dismissBtn = document.createElement('button')
+  dismissBtn.classList.add('btn')
   dismissBtn.innerText = 'Ok'
-  dismissBtn.addEventListener('click', dismissMenuHandler)
+  dismissBtn.addEventListener('click', dissmissBtnHandler)
 
-  container.append(h2)
-  container.append(ul)
-  container.append(dismissBtn)
+  wrapper.append(h2)
+  wrapper.append(ul)
+  wrapper.append(dismissBtn)
+
+  container.append(wrapper)
 
   document.body.append(container)
 }

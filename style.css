@@ -1,3 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39+Text&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+:root {
+  --bg-color: #070E1A;
+  --text-color: #E7ECEF;
+  --red-color: #FB314A;
+  --btn-color: #89ECE3;
+  --card-background: #353A47;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,16 +20,114 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
-.game-over,
-.how-to {
+h1 {
+  font-size: 5em;
+  font-family: 'Libre Barcode 39 Text', cursive;
+  text-align: center;
+  color: var(--text-color);
+}
+
+h2 {
+  font-size: 4em;
+  text-align: center;
+}
+
+p, 
+li {
+  font-size: 1.25em;
+}
+
+ul {
+  list-style-type: none; 
+  padding: 0; 
+  margin: 0; 
+}
+
+button {
+  font-family: 'Audiowide', cursive;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+.btn {
+  background-color: transparent;
+  color: var(--btn-color);
+  border: 1px solid var(--btn-color);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background-color: var(--btn-color);
+  color: var(--bg-color);
+}
+
+.main-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
+}
+
+.main-menu h1 {
+  margin-bottom: 2rem;
+}
+
+.main-menu .inputs {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-menu .btn {
+  margin: 0.5rem 0;
+}
+
+#pause-btn {
+  position: absolute;
+  height: fit-content;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto 2rem auto 0;
+}
+
+#pause-btn.hide {
+  opacity: 0;
+}
+
+.alert {
   width: 100%;
   height: 100%;
   position: absolute;
   left: 0;
   top: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.alert .wrapper {
+  background-color: #1E1E24;
+  padding: 3rem;
+  border-radius: 2rem;
+}
+
+.alert h2 {
+  margin-bottom: 1rem;
+}
+
+.alert li {
+  margin-bottom: 2rem;
 }
 
 .container {
@@ -26,7 +136,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: darkgrey;
 }
 
 .stage {
@@ -35,6 +144,8 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+
 
 .choices {
   margin: 0 5rem;
@@ -55,7 +166,7 @@ body {
   width: 400px;
   margin-bottom: 2rem;
   position: relative;
-  background-color: black;
+  background-color: #262626;
 }
 
 .health, .bar {
@@ -68,7 +179,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: green;
+  background-color: #00bb00;
 }
 
 .win-stack {
@@ -77,18 +188,19 @@ body {
   justify-content: center;
 }
 
-.win-stack div {
-  height: 75px;
-  width: 75px;
+.win-stack .winner {
+  height: 85px;
+  width: 85px;
   margin: 0 0.5rem;
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 0.5rem;
 }
 
 .win-stack .card.selected {
-  height: 75px;
-  width: 75px;
+  height: 100%;
+  width: 100%;
   margin-left: 0;
+  border: none;
   border-radius: 0.5rem;
 }
 
@@ -107,13 +219,18 @@ body {
   padding: 1.25rem 0.75rem;
   display: inline;
   position: relative;
-  background-color: black;
+  background-color: var(--card-background);
   color: white;
   border: 1px solid white;
   border-radius: 1rem;
   cursor: pointer;
+  font-size: 0.85em;
   transform: translateY(120px);
   transition: all 0.2s ease;
+}
+
+.card .troop {
+  color: var(--red-color);
 }
 
 .card.selected {
@@ -127,7 +244,7 @@ body {
 
 .card.hover {
   z-index: 2;
-  background-color: tomato;
+  background-color: #545d73;
   transform: translateY(0);
 }
 
