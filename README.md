@@ -10,6 +10,10 @@
 
 ---
 
+### [**_Play This Game!_**](https://battlecards.surge.sh/)
+
+---
+
 ### **_Description_**
 
 #### A card game where where you battle it out tring to get the opposing player down to no health.
